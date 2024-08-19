@@ -1,5 +1,14 @@
 # WalletConnect v2 Examples
 
+
+dapps/ethereum-provider 에 homeverse testnet/sandverse 추가
+
+
+
+-----
+
+
+
 Catalogue of various wallet and dapp examples implementing WalletConnect's **SDKs and APIs**. Each example contains its own README with further instructions and explanations.
 
 ### Web3Modal SDK
