@@ -33,6 +33,7 @@ function App() {
   const [provider, setProvider] = useState<EProvider | null>(null);
   const [connected, setConnected] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
+  const [txHash, setTxHash] = useState<string | null>(null);
   const ethersWeb3Provider = provider != null ? new ethers.providers.Web3Provider(provider) : null;
 
   useEffect(() => {
@@ -89,10 +90,52 @@ function App() {
     setConnected(false);
   };
 
+  const sendTransaction = async () => {
+    if (provider === null) {
+      console.log("provider is null in sendTransaction");
+      return;
+    }
+
+    try {
+      const ethersSigner = await ethersWeb3Provider!
+        .getSigner(provider.accounts[0]);
+      const sendTxResult = await ethersSigner.sendTransaction({
+        to: provider.accounts[0],
+        value: ethers.utils.parseUnits("1", "gwei"),
+        gasLimit: 21000,
+      })
+      console.log("sendTxResult", sendTxResult);
+      setTxHash(sendTxResult.hash);
+    } catch (error) {
+      console.error("Failed to send transaction", error);
+      alert("Failed to send transaction " + error);
+    }
+  };
+
+  const sign = async () => {
+    if (provider === null) {
+      console.log("provider is null in sign");
+      return;
+    }
+
+    try {
+      const ethersSigner = await ethersWeb3Provider!
+        .getSigner(provider.accounts[0]);
+      const signResult = await ethersSigner.signMessage("Hello World");
+      console.log("signResult", signResult);
+    } catch (error) {
+      console.error("Failed to sign", error);
+      alert("Failed to sign " + error);
+    }
+  };
+
   if (connected) {
     return (
       <>
         <button onClick={getBalance}>Balance</button>
+        {txHash && <p>txHash: {txHash}</p>}
+        <button onClick={sendTransaction}>Send Tranction</button>
+        <button onClick={sign}>Sign</button>
         <button onClick={refresh}>Refresh</button>
         <p>
           balance: {balance ? `${balance} ETH` : `click "Balance" to fetch`}
